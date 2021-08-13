@@ -103,10 +103,18 @@ static char input[];
 		char [] matchSetStart = {'('};
 		char [] matchSetEnd = {')'};
 		ausgabe("operator->", t);
-		if (lookAtCurrent(matchSetStart))
-			return match(matchSetStart, t+1) && expression(t+1) && match(matchSetEnd, t+1);
+		if (lookAtCurrent(matchSetStart)) {
+			if (match(matchSetStart, t+1) && expression(t+1)) {
+				if (match(matchSetEnd, t+1))
+					return true;
+				else
+					syntaxError("Geschlossene Klammer erwartet");
+					return false;
+			}
+		}
 		else 
 			return num(t+1);
+		return false;
 	}
 	
 
@@ -267,8 +275,9 @@ static char input[];
 	//-------------------------------------------------------------------------
 	
 	static void syntaxError(String s){
+	  String fehlerZeichen = (input[pointer] == EOF) ? "EOF" : String.valueOf(input[pointer]);
 	  System.out.println("Syntax Fehler beim "+(pointer+1)+" Zeichen: "
-	            +input[pointer]);
+	            +fehlerZeichen);
 	  System.out.println(s);  
 	}//syntaxError
 	
